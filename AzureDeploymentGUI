@@ -1,0 +1,121 @@
+#Creates GUI Textbox
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+
+function GUI
+{
+param($text,$button,[switch]$two)
+
+$form = New-Object System.Windows.Forms.Form
+$form.Text = 'Azure Deployment Automator'
+$form.Size = New-Object System.Drawing.Size(300,200)
+$form.StartPosition = 'CenterScreen'
+
+if($two)
+{
+	$form = New-Object System.Windows.Forms.Form
+$form.Text = 'Azure Deployment Automator'
+$form.Size = New-Object System.Drawing.Size(300,200)
+$form.StartPosition = 'CenterScreen'
+
+	#Creates GUI OK Button
+    $okButton = New-Object System.Windows.Forms.Button
+    $okButton.Location = New-Object System.Drawing.Point(75,120)
+    $okButton.Size = New-Object System.Drawing.Size(75,23)
+    $okButton.Text = 'Yes'
+    $okButton.DialogResult = [System.Windows.Forms.DialogResult]::Yes
+    $form.AcceptButton = $okButton
+    $form.Controls.Add($okButton)
+
+    $cancelButton = New-Object System.Windows.Forms.Button
+    $cancelButton.Location = New-Object System.Drawing.Point(150,120)
+    $cancelButton.Size = New-Object System.Drawing.Size(75,23)
+    $cancelButton.Text = 'No'
+    $cancelButton.DialogResult = [System.Windows.Forms.DialogResult]::No
+    $form.CancelButton = $cancelButton
+    $form.Controls.Add($cancelButton)
+
+    #Creates GUI Label
+	$label = New-Object System.Windows.Forms.Label
+	$label.Location = New-Object System.Drawing.Point(10,20)
+	$label.Size = New-Object System.Drawing.Size(280,20)
+	$label.Text = "Do you want to create a data disk?"
+	$form.Controls.Add($label)
+
+	$form.Topmost = $true
+
+	$form.Add_Shown({$textBox.Select()})
+	$global:result = $form.ShowDialog()
+	
+}
+else
+{
+#Creates GUI OK Button
+$okButton = New-Object System.Windows.Forms.Button
+$okButton.Location = New-Object System.Drawing.Point(75,120)
+$okButton.Size = New-Object System.Drawing.Size(75,23)
+$okButton.Text = $button
+$okButton.DialogResult = [System.Windows.Forms.DialogResult]::OK
+$form.AcceptButton = $okButton
+$form.Controls.Add($okButton)
+
+#Creates GUI Label
+$label = New-Object System.Windows.Forms.Label
+$label.Location = New-Object System.Drawing.Point(10,20)
+$label.Size = New-Object System.Drawing.Size(280,20)
+$label.Text = $text
+$form.Controls.Add($label)
+
+#Creates GUI Textbox
+$global:textBox = New-Object System.Windows.Forms.TextBox
+$textBox.Location = New-Object System.Drawing.Point(10,40)
+$textBox.Size = New-Object System.Drawing.Size(260,20)
+$form.Controls.Add($textBox)
+
+$form.Topmost = $true
+
+$form.Add_Shown({$textBox.Select()})
+$global:result = $form.ShowDialog()
+}
+}
+
+#Creates Automation Object
+$azurecsv = [pscustomobject]@{
+	VMName = @()
+	VMSize = @()
+	Disk = @()
+	VNetName = @() 
+	VNetRange = @()
+	SubnetName = @()
+	SubnetRange = @()
+	Username = @()
+	Password = @()
+    RGNAME = @()
+}
+
+gui -text "How Many VMs would you like to create?" -button "okay"
+for ($i = [int]$textbox.text ; $i -ne 0 ; $i--)
+{
+	gui -text "What is the name of VM $i ?" -button "okay"
+	[array]$azurecsv.vmname += $textbox.text
+	gui -two
+	if ($result -eq[System.Windows.Forms.DialogResult]::Yes)
+	{
+		gui -text "What disk size?" -button "ok"
+		[array]$azurecsv.disk += $textbox.text
+	}
+}
+gui -text "What is the Resource group Name?" -button "Okay"
+$azurecsv.RGName = $textbox.text
+gui -text "What is vnet name?" -button "okay"
+[array]$azurecsv.vnetname += $textbox.text
+gui -text "What is vnet address range?" -button "okay"
+$azurecsv.vnetRange += $textbox.text
+gui -text "What is subnet name?" -button "Okay"
+$azurecsv.subnetname = $textbox.text
+gui -text "What is subnet address range?" -button "okay"
+$azurecsv.subnetrange = $textbox.text
+gui -text "What is the username?" -button "Okay"
+$azurecsv.username = $textbox.text
+gui -text "What is the password?" -button "Okay"
+$azurecsv.password = $textbox.text
