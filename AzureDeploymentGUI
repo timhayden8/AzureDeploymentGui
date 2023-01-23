@@ -98,11 +98,17 @@ for ($i = [int]$textbox.text ; $i -ne 0 ; $i--)
 {
 	gui -text "What is the name of VM $i ?" -button "okay"
 	[array]$azurecsv.vmname += $textbox.text
+	gui -text "What is the size of VM $i ?" -button "okay"
+	[array]$azurecsv.vmsize += $textbox.text
 	gui -two
 	if ($result -eq[System.Windows.Forms.DialogResult]::Yes)
 	{
 		gui -text "What disk size?" -button "ok"
 		[array]$azurecsv.disk += $textbox.text
+	}
+	else 
+    {
+    [array]$azurecsv.disk += ""
 	}
 }
 gui -text "What is the Resource group Name?" -button "Okay"
