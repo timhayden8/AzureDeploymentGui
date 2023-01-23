@@ -1,7 +1,8 @@
-#Creates GUI Textbox
+#imports .net core class and creates textbox object
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
+#creates GUI function. 
 function GUI
 {
 param($text,$button,[switch]$two)
@@ -93,6 +94,7 @@ $azurecsv = [pscustomobject]@{
     RGNAME = @()
 }
 
+#Finds number of VMs to create and saves input as variable. Variable is pushed into a for loop, where we add the VM names and sizes to the automation object. It finds out if a datadisk is necessary, and if so, adds datadisksize to automation object. 
 gui -text "How Many VMs would you like to create?" -button "okay"
 for ($i = [int]$textbox.text ; $i -ne 0 ; $i--)
 {
@@ -111,6 +113,7 @@ for ($i = [int]$textbox.text ; $i -ne 0 ; $i--)
     [array]$azurecsv.disk += ""
 	}
 }
+
 gui -text "What is the Resource group Name?" -button "Okay"
 $azurecsv.RGName = $textbox.text
 gui -text "What is vnet name?" -button "okay"
